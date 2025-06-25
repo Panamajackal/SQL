@@ -28,23 +28,23 @@ VALUES
     
 -- © Copyright 2025 Break Into Tech  --
 
-#For this project, I used SQL to query the Superstore database to get information about items sold at the store and their prices. 
+#For this project, I used SQL to query the Superstore database to get information about items sold at the store. 
 
-#orders items by price
-SElECT item_name, price
+ #Orders Items by Price Highest to Lowest
+SELECT  item_name, price
 FROM superstore
-ORDER BY price;
-
-#shows average price
-SELECT AVG (price)
-FROM superstore;
-
-#shows average average price of Kitchen Supplies
-SELECT AVG (price), category
+ORDER BY price DESC
+;
+ #To Find the highest rated category
+SELECT AVG (average_rating), category
 FROM superstore
-WHERE category = 'Kitchen Supplies';
+GROUP BY category 
+ORDER BY AVG (average_rating) DESC
+;
 
-#shows the highest rated item in Kitchen Supplies
-SELECT MAX (average_rating), item_name
+ #If all the item's par is 25, what needs to be restocked?
+SELECT item_name, stock_quantity
 FROM superstore
-WHERE category = 'Kitchen Supplies';
+WHERE stock_quantity < 25
+ORDER BY stock_quantity
+;
