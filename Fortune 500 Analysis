@@ -56,17 +56,37 @@ VALUES
     ('Company JJ', 'Manufacturing', 370.0, 3100, 1, 20, 12, 7.6),
     ('Company KK', 'Healthcare', 150.2, 3400, 0, 16, 8, 5.3);
 
-SELECT *
+--1. Which companies have healthcare benefits, at least 18 days of paid time off, and more than 8 weeks of maternity leave
+SELECT company_name
 FROM fortune_companies
-LIMIT 1;
--- Question #1 What industry has the greatest average revenue
-SELECT industry, AVG (revenue) as avg_revenue
+WHERE paid_time_off_days >= 18 
+AND maternity_leave_weeks > 8
+AND healthcare_benefits=1
+ORDER BY avg_employee_tenure DESC
+;
+--2. Listing industries by average revenue
+SELECT industry,  COUNT(industry) as number_of_companies, ROUND(AVG(revenue),2) AS avg_revenue
 FROM fortune_companies
 GROUP BY industry
 ORDER BY avg_revenue DESC
-LIMIT 1;
-
--- Question #2 What company makes the most revenue per employee
-SELECT company_name
-FROM fortune_companies;
--- Question #3 What industry has the most paid time off
+;
+--3.Trying to figure out which companies have great benefits and the longest retention of employees
+SELECT company_name, avg_employee_tenure, CASE WHEN maternity_leave_weeks >= 12 AND paid_time_off_days >= 20 THEN 'best benefits'
+WHEN maternity_leave_weeks >= 8 AND paid_time_off_days >= 14 THEN 'better benefits'
+WHEN maternity_leave_weeks >= 4 AND paid_time_off_days >= 7 THEN 'some benefits'
+ELSE 'poor benefits'
+END AS 'benefits'
+FROM fortune_companies
+WHERE healthcare_benefits = 1
+ORDER BY avg_employee_tenure DESC
+--;
+--4. What industries have at least an average of 5000 employees and an average revenue of $150 Billion
+SELECT industry
+FROM fortune_companies
+GROUP BY industry
+HAVING AVG(employees) >=5000 AND AVG(revenue) >= 150
+;
+--What company in the Technology industry has the fewest employees, and how many do they have?
+SELECT company_name, min(employees)
+FROM fortune_companies
+WHERE industry = 'Technology'
