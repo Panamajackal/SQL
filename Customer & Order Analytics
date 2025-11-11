@@ -1,0 +1,55 @@
+--In this project, I am querying a database with multiple tables in it to quantify statistics about customers and order data.
+--1. How many orders were placed in January?
+SELECT COUNT (distinct orderID)
+FROM BIT_DB.JanSales
+WHERE orderID <> 'Order ID'
+AND length(orderID) = 6
+;
+
+--#2 How many of those orders were for an Iphone
+SELECT COUNT (distinct orderID)
+FROM BIT_DB.JanSales
+WHERE orderID <> 'Order ID'
+AND length(orderID) = 6
+AND PRODUCT LIKE '%IPHONE%';
+
+--#3 Select the customer account numbers for all the orders that were placed in February. 
+SELECT distinct acctnum
+FROM BIT_DB.customers
+INNER JOIN BIT_DB.FebSales
+ON customers.order_id = FebSales.orderID
+WHERE order_id <> 'Order ID'
+AND length(order_id) = 6;
+
+--#4 Which product was the cheapest one sold in January, and what was the price? 
+SELECT JanSales.Product
+,MIN (distinct JanSales.price)
+FROM BIT_DB.JanSales 
+Group BY product
+Order BY price ASC;
+
+-- #5 What is the total revenue for each product sold in January? 
+SELECT JanSales.Product
+, SUM(JanSales.Quantity) * JanSales.price as Revenue
+FROM BIT_DB.JanSales
+GROUP BY JanSales.Product;
+
+-- #6 Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue? 
+SELECT FebSales.Product
+,FebSales.Quantity
+, SUM(FebSales.Quantity) * FebSales.price as revenue
+FROM BIT_DB.FebSales
+WHERE FebSales.location = '548 Lincoln St, Seattle, WA 98101'
+Group BY FebSales.Product
+;
+
+-- #7 How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers? 
+SELECT COUNT (DISTINCT customers.acctnum) AS number_of_customers
+,AVG (FebSales.Quantity * FebSales.price) AS AVG_spent
+FROM FebSales
+LEFT JOIN customers
+ON customers.order_id = FebSales.orderID
+WHERE FebSales.Quantity > 2
+AND length(Febsales.orderID) = 6
+AND FebSales.orderID <> 'Order ID'
+;
