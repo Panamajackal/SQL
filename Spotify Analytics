@@ -1,0 +1,66 @@
+-- For this project, I downloaded Spotify data from Kaggle.
+-- Then I created a table to insert Spotify data into.
+-- Finally, I performed analytics on the data using SQL. 
+
+--Creating the table: 
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+--Then I inserted the Spotify Data .csv into the table.
+
+--Next, I explored the data using the following SQL. 
+-- #1 Who are the 10 most popular artists
+SELECT Spotifydata.artist_name
+FROM BIT_DB.Spotifydata
+GROUP BY Spotifydata.artist_name
+ORDER BY Spotifydata.popularity DESC
+LIMIT 10
+;
+--#2 What is the average danceability, tempo, song duration in secs of the 10 most popular songs
+SELECT AVG(Spotifydata.danceability) as AVG_Danceability
+, AVG(Spotifydata.tempo) AS AVG_Tempo
+, AVG(Spotifydata.duration_ms)/1000 as duration_sec
+FROM BIT_DB.Spotifydata
+WHERE Spotifydata.id > 11
+;
+--#3 What artist and tracks have danceability and tempo over .6 ranked by popularity desc
+SELECT Spotifydata.artist_name
+, Spotifydata.track_name
+FROM BIT_DB.Spotifydata
+WHERE Spotifydata.danceability > .6
+AND Spotifydata.tempo >.6
+ORDER BY Spotifydata.popularity DESC
+;
+-- #4 What tracks and their artists are at least Three and half minutes long have speechiness of .1 and danceability .7?
+SELECT Spotifydata.track_name
+, Spotifydata.artist_name
+FROM BIT_DB.Spotifydata
+WHERE Spotifydata.duration_ms >= 21000
+AND Spotifydata.speechiness >= .1
+AND Spotifydata.danceability >= .7
+;
+--#5 What is each artists average danceabilty for their tracks?
+SELECT Spotifydata.artist_name
+, AVG(Spotifydata.danceability) AS AVG_Danceability
+, COUNT (Spotifydata.track_name) AS Number_of_Tracks_In_Top_50
+FROM BIT_DB.Spotifydata
+GROUP BY Spotifydata.artist_name
+;
